@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>$COZY</title>
+    <link rel="stylesheet" href="tasksstyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+    <header>
+        <h2>$COZY</h2>
+    </header>
+
+    <section>
+        <button onclick="window.history.back()">BACK</button>
+    </section>
+
+    <section class="rewards">
+            <p id="Daily">Daily reward</p>
+            <button class="claim-btn-daily" onclick="claimTask(3)">CLAIM</button>
+    </section>
+
+    <section id="tasks-box">
+        <div class="task">
+            <p>Join $COZY community</p>
+            <button class="claim-btn" onclick="claimTask(1)">CLAIM</button>
+        </div>
+        <div class="task">
+            <p>Follow $COZY on X</p>
+            <button class="claim-btn" onclick="claimTask(2)">CLAIM</button>
+        </div>
+        <div class="task">
+            <p>Wacth $COZY vibes</p>
+            <button class="claim-btn" onclick="claimTask(3)">CLAIM</button>
+        </div>
+        <div class="task">
+            <p>Listen to $COZY vibes</p>
+            <button class="claim-btn" onclick="claimTask(3)">CLAIM</button>
+        </div>
+        <div class="task">
+            <p>Retweet $COZY roadmap</p>
+            <button class="claim-btn" onclick="claimTask(3)">CLAIM</button>
+        </div>
+    </section>
+</body>

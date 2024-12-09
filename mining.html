@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>$COZY</title>
+    <link rel="stylesheet" href="miningstyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+<header>
+    <h2>$COZY</h2>
+</header>
+
+<section>
+    <button onclick="window.history.back()">BACK</button>
+</section>
+
+<section class="mining-box">
+    <h3>Mining</h3>
+    <p>Amount : <span id="miningAmount"></span></p>
+
+    <button id="CLAIM" onclick="Claim()">CLAIM</button>
+    <p id="Power"></p>
+</section>
+
+<section class="Upgrade">
+    <p id="upgradetext">Upgrade the mining power</p>
+    <button id="Upgrade1">100x1hour</button>
+    <button id="Upgrade2">1000x1hour</button>
+</section>
+
+<script src="miningscript.js"></script>
+</body>

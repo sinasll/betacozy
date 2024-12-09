@@ -78,7 +78,7 @@ button {
     position: relative;
     overflow: hidden;
     text-align: center;
-    margin-left: 25px;
+    margin-left: 50px;
     padding: 10px 15px;
     border-radius: 8px;
 }
@@ -102,7 +102,7 @@ button::before {
     font-size: 1.3em; /* Bigger text for emphasis */
     padding: 15px 30px; /* More padding */
     border-radius: 8px; /* Rounded corners */
-    width: 80%;
+    width: 60%;
     margin: 0 auto; /* Center the button horizontally */
     display: block;
 }
@@ -118,7 +118,7 @@ button::before {
     max-width: 400px;
     position: relative;
     animation: smoothCozyBackgroundColor 10s ease-in-out infinite;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 /* Smooth animation for background color transitions */
@@ -192,4 +192,17 @@ button::before {
     text-align: center;
     margin-top: 10px;
     font-weight: bold;
+}
+
+#benifits{
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+#Upgrade1{
+    background:rgb(143, 124, 17);
+}
+
+#Upgrade2 {
+     background: rgb(73, 98, 104);
 }

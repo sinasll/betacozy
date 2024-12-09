@@ -14,14 +14,14 @@ function updateMiningAmount() {
 // Function to update the mining power display
 function updateMiningPower() {
     const powerElement = document.getElementById('Power');
-    powerElement.innerText = `mining power 10x1hour`; // Display the mining power as fixed rate
+    powerElement.innerText = `BRONZE mining 10x1hour`; // Display the mining power as fixed rate
 }
 
 // Function to check if the mining should stop after 8 hours
 function checkMiningTimeout() {
     const elapsedTime = Date.now() - miningStartTime;
     if (elapsedTime >= maxMiningTime) {
-        clearInterval(miningInterval); // Stop the mining process
+        clearInterval(miningInterval); // Stop the mining process after 8 hours
         console.log("Mining stopped after 8 hours due to inactivity.");
     }
 }
@@ -69,10 +69,20 @@ function Claim() {
 // Start mining when the page loads
 window.onload = () => {
     console.log("Window loaded. Starting mining..."); // Debugging line
-    if (miningAmount > 0) {
-        setInterval(() => {
+
+    // Calculate the time elapsed since the mining started
+    const elapsedTime = Date.now() - miningStartTime;
+    if (elapsedTime < maxMiningTime) {
+        // Resume mining if less than 8 hours have passed
+        miningInterval = setInterval(() => {
+            miningAmount += miningRate;
             updateMiningAmount();
-        }, 1000); // Keep the mining display updated if there's already some mined amount
+            checkMiningTimeout();
+        }, 1000);
+    } else {
+        // Stop mining if the 8 hours are over
+        clearInterval(miningInterval);
+        console.log("Mining stopped after 8 hours due to inactivity.");
     }
     
     // Update the mining power display

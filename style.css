@@ -79,7 +79,7 @@ h2 {
         overflow-x: hidden;
         gap: 5px;
         height: 400px;
-        max-height: 300px;
+        max-height: 400px;
 
         /* Hide the scrollbar */
     scrollbar-width: none; /* For Firefox */

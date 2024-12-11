@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>$COZY</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+</head>
+
+<body>
+<header>
+    <h2>$COZY</h2>
+</header>
+
+<section class="user-info">
+    <p><span id="score">0</span></p>
+
+    <p><span id="username">@sinasll</span></p>
+    <button class="wallet-button">CONNECT WALLET</button>
+    <div id="wallet-address"></div> 
+</section>
+
+<div class="tasks-box">
+    <div class="task">
+        <span>Join $COZY community</span>
+        <button class="claim-btn" onclick="claimTask(1)">+100 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Follow $COZY on X</span>
+        <button class="claim-btn" onclick="claimTask(2)">+100 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Follow $COZY on Instagram</span>
+        <button class="claim-btn" onclick="claimTask(2)">+100 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Sub $COZY on YouTube</span>
+        <button class="claim-btn" onclick="claimTask(2)">+100 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Watch $COZY vibes</span>
+        <button class="claim-btn" onclick="claimTask(3)">+50 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Listen to $COZY radio</span>
+        <button class="claim-btn" onclick="claimTask(3)">+50 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Retweet $COZY roadmap</span>
+        <button class="claim-btn" onclick="claimTask(3)">+50 $COZY</button>
+    </div>
+    <div class="task">
+        <span>Retweet $COZY post</span>
+        <button class="claim-btn" onclick="claimTask(3)">+50 $COZY</button>
+    </div>
+</div>
+
+<nav class="nav">
+    <button class="nav-link" onclick="goHome()"><i class="fas fa-home"></i></button>
+    <button class="nav-link" onclick="goLeaderboard()"><i class="fas fa-trophy"></i></button>
+    <button class="nav-link" onclick="goFriends()"><i class="fas fa-users"></i></button>
+</nav>
+
+
+<script src="script.js"></script>
+</body>

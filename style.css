@@ -72,7 +72,7 @@ header {
         gap: 5px;
         height: 400px;
         max-height: 400px;
-        padding-bottom: 100%;
+        padding-bottom: 120px;
 
         /* Hide the scrollbar */
     scrollbar-width: none; /* For Firefox */

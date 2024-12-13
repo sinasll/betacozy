@@ -45,8 +45,8 @@ header {
         gap: 5px;
         height: 400px;
         max-height: 400px;
-        padding-bottom: 100%;
-         /* Hide the scrollbar */
+         
+        /* Hide the scrollbar */
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
     }
@@ -69,7 +69,6 @@ header {
     gap: 5px;
     height: 400px;
     max-height: 400px;
-    padding-bottom: 100%;
 
     /* Hide the scrollbar */
 scrollbar-width: none; /* For Firefox */
@@ -164,7 +163,6 @@ display: none; /* For Chrome, Safari, and Edge */
         gap: 5px;
         height: 400px;
         max-height: 400px;
-        padding-bottom: 100%;
 
         /* Hide the scrollbar */
     scrollbar-width: none; /* For Firefox */

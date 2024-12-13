@@ -45,8 +45,9 @@ header {
         gap: 5px;
         height: 400px;
         max-height: 400px;
-         
-        /* Hide the scrollbar */
+        padding-bottom: 100%;
+        
+         /* Hide the scrollbar */
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
     }
@@ -69,6 +70,7 @@ header {
     gap: 5px;
     height: 400px;
     max-height: 400px;
+    padding-bottom: 100%;
 
     /* Hide the scrollbar */
 scrollbar-width: none; /* For Firefox */
@@ -181,10 +183,16 @@ display: none; /* For Chrome, Safari, and Edge */
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding: 15px 30px;
+        padding: 15px 10px;
         font-weight: bold;
         margin-top: 0px;
         margin-bottom: 10px;
+    }
+
+    .prize {
+        font-size: 0.7em;
+        display: flex;
+        align-items: center;
     }
 
     .claim-btn {

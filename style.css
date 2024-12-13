@@ -5,7 +5,7 @@
 }
 
 body {
-    background-color: #BA8E23;
+    background-color: rgb(230, 180, 0);
     display: flex; 
     margin: 0;
     padding: 0;
@@ -29,6 +29,86 @@ header {
     height: auto;
 }
 
+.leaderboard {
+    background-color: #000000;
+    color: white;
+        border-radius: 20px;
+        margin: 0px auto;
+        margin-top: 20px;
+        padding: 20px 10px;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        gap: 5px;
+        height: 400px;
+        max-height: 400px;
+        padding-bottom: 100%;
+         /* Hide the scrollbar */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    }
+
+.leaderboard::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Edge */
+}
+
+.friends-list {
+    background-color: #000000;
+    border-radius: 20px;
+    margin: 0px auto;
+    padding: 20px 10px;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    gap: 5px;
+    height: 400px;
+    max-height: 400px;
+    padding-bottom: 100%;
+
+    /* Hide the scrollbar */
+scrollbar-width: none; /* For Firefox */
+-ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.friends-list::-webkit-scrollbar::-webkit-scrollbar {
+display: none; /* For Chrome, Safari, and Edge */
+}
+
+.friends {
+    background-color: rgb(20, 20, 20);
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 30px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.users {
+    background-color: rgb(20, 20, 20);
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 30px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+
     .user-info {
         text-align: center;
         padding: 0px;
@@ -47,6 +127,18 @@ header {
     }
 
     .wallet-button {
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #000000;
+        color: rgb(225, 225, 225);
+        border-radius: 25px;
+        font-size: 1em;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .invite {
         margin: 20px auto;
         padding: 10px 20px;
         background-color: #000000;

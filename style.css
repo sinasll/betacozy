@@ -27,6 +27,7 @@ header {
 .logo {
     width: 5em;
     height: auto;
+    border: 1px solid white;
 }
 
 .leaderboard {
@@ -178,6 +179,17 @@ display: none; /* For Chrome, Safari, and Edge */
         font-weight: bold;
         margin-top: 0px;
     }
+    
+    .top-100 {
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #000000;
+        color: rgb(225, 225, 225);
+        border-radius: 25px;
+        font-size: 1em;
+        border: none;
+        font-weight: bold;
+    }
 
     .wallet-button {
         margin: 20px auto;
@@ -238,13 +250,14 @@ display: none; /* For Chrome, Safari, and Edge */
         align-items: center;
         width: 100%;
         padding: 15px 10px;
+        font-size: 0.7em;
         font-weight: bold;
         margin-top: 0px;
         margin-bottom: 10px;
     }
 
     .prize {
-        font-size: 0.7em;
+        font-size: 0.5em;
         display: flex;
         align-items: center;
     }

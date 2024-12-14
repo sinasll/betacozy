@@ -249,6 +249,7 @@ display: none; /* For Chrome, Safari, and Edge */
         align-items: center;
         width: 100%;
         padding: 15px 10px;
+        font-size: 1em;
         font-weight: bold;
         margin-top: 0px;
         margin-bottom: 10px;

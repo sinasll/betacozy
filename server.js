@@ -10,7 +10,7 @@ dotenv.config();
 
 // Middleware setup
 app.use(cors());
-app.use(express.json());
+app.use(express.json());  // For parsing application/json
 
 // Add user routes with '/api' prefix
 app.use('/api', userRoutes);  // All user-related routes are now prefixed with /api

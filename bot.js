@@ -11,18 +11,24 @@ bot.onText(/\/start/, async (msg) => {
   const userId = msg.from.id.toString();  // User ID (Telegram ID)
   const username = msg.from.username || 'Unknown';  // Use the username or 'Unknown' if not available
   
-  // Check if the user already exists in the database
-  let user = await User.findOne({ user_id: userId });
+  try {
+    // Check if the user already exists in the database
+    let user = await User.findOne({ user_id: userId });
 
-  // If the user doesn't exist, create a new record
-  if (!user) {
-    user = new User({
-      user_id: userId,
-      username: username,
-    });
-    await user.save();  // Save the new user to the database
+    // If the user doesn't exist, create a new record
+    if (!user) {
+      user = new User({
+        user_id: userId,
+        username: username,
+        score: 0,  // Initialize score to 0 if you track it
+      });
+      await user.save();  // Save the new user to the database
+    }
+
+    // Send a welcome message to the user
+    bot.sendMessage(userId, `Welcome to $COZYt, ${username}! Your current score is ${user.score}.`);
+  } catch (error) {
+    console.error('Error handling /start command:', error);
+    bot.sendMessage(userId, 'Something went wrong while registering your account. Please try again later!');
   }
-
-  // Send a welcome message to the user
-  bot.sendMessage(userId, 'Welcome to the $COZYt!');
 });

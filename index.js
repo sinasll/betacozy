@@ -27,10 +27,12 @@ mongoose
 // Define MongoDB schema and model
 const userSchema = new mongoose.Schema({
     userId: { type: Number, required: true, unique: true },
-    username: String,
+    username: { type: String, required: true },
     score: { type: Number, default: 0 },
-    lastDaily: Date,
-});
+    lastDaily: { type: Date, default: null },
+    rewardClaimedToday: { type: Boolean, default: false },
+}, { timestamps: true });
+
 const User = mongoose.model('User', userSchema);
 
 // Start command
@@ -39,17 +41,27 @@ bot.start(async (ctx) => {
     const username = ctx.from.username;
 
     let user = await User.findOne({ userId });
-    if (!user) {
-        user = new User({ userId, username });
-        await user.save();
-    }
 
-    ctx.reply(`Welcome, ${username || 'User'}! Your score is ${user.score}.`);
+    if (!user) {
+        // If user does not exist, create a new one
+        user = new User({ userId, username });
+        try {
+            await user.save();
+            ctx.reply(`Welcome, ${username || 'User'}! Your score is ${user.score}.`);
+        } catch (err) {
+            console.error('Error saving new user:', err);
+            ctx.reply('Something went wrong while registering you.');
+        }
+    } else {
+        // If user exists, just show the score
+        ctx.reply(`Welcome back, ${username || 'User'}! Your score is ${user.score}.`);
+    }
 });
 
 // Daily reward command
 bot.command('daily', async (ctx) => {
     const userId = ctx.from.id;
+
     let user = await User.findOne({ userId });
 
     if (!user) {
@@ -57,15 +69,24 @@ bot.command('daily', async (ctx) => {
     }
 
     const rewardPoints = 25; // Define the reward points
-
     const now = new Date();
-    if (!user.lastDaily || now - user.lastDaily > 24 * 60 * 60 * 1000) {
-        user.score += rewardPoints;
-        user.lastDaily = now;
+
+    // Check if the user has already claimed the daily reward
+    if (user.rewardClaimedToday && now - user.lastDaily < 24 * 60 * 60 * 1000) {
+        return ctx.reply('You already claimed your daily reward. Come back tomorrow!');
+    }
+
+    // Add points to score and update last daily reward time
+    user.score += rewardPoints;
+    user.lastDaily = now;
+    user.rewardClaimedToday = true;
+
+    try {
         await user.save();
         ctx.reply(`You claimed ${rewardPoints} points! Your total score is now ${user.score}.`);
-    } else {
-        ctx.reply('You already claimed your daily reward. Come back tomorrow!');
+    } catch (err) {
+        console.error('Error saving user data:', err);
+        ctx.reply('Something went wrong while claiming your reward.');
     }
 });
 

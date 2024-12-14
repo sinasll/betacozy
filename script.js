@@ -90,7 +90,7 @@ function claimReward(taskNumber) {
 
 // Function to check and disable completed tasks
 function checkCompletedTasks() {
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= 9; i++) {
         if (localStorage.getItem(`task${i}Completed`) === 'true') {
             const taskClaimButton = document.getElementById(`task${i}Claim`);
             taskClaimButton.disabled = true;

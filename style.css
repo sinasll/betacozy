@@ -180,9 +180,14 @@ display: none; /* For Chrome, Safari, and Edge */
     }
     
     .top-100 {
-        font-size: 2.5em;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #000000;
+        color: rgb(225, 225, 225);
+        font-size: 1em;
+        border: none;
         font-weight: bold;
-        margin-top: 0px;
+        cursor: pointer;
     }
 
     .wallet-button {

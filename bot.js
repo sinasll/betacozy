@@ -1,5 +1,5 @@
-const mongoose = require('./db');  // Import your db.js connection
 const TelegramBot = require('node-telegram-bot-api');
+const mongoose = require('./db');  // Your database connection file
 const User = require('./models/User');  // Import your User model
 require('dotenv').config();
 

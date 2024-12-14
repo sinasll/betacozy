@@ -64,9 +64,24 @@ function getScore() {
 }
 
 // Function to update the score in localStorage and on the page
-function updateScore(newScore) {
+async function updateScore(newScore) {
     localStorage.setItem('score', newScore);
     document.getElementById('score').innerText = newScore;
+
+    // Send updated score to server (using fetch, axios, etc.)
+    const username = localStorage.getItem('username');
+    await fetch('/update-score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            score: newScore,
+        }),
+    }).catch(error => {
+        console.error('Error updating score to server:', error);
+    });
 }
 
 // Function to claim reward for completing a task
@@ -88,16 +103,7 @@ function claimReward(taskNumber) {
     localStorage.setItem(`task${taskNumber}Completed`, true);
 }
 
-// Function to check and disable completed tasks
-function checkCompletedTasks() {
-    for (let i = 1; i <= 9; i++) {
-        if (localStorage.getItem(`task${i}Completed`) === 'true') {
-            const taskClaimButton = document.getElementById(`task${i}Claim`);
-            taskClaimButton.disabled = true;
-            taskClaimButton.innerText = 'Reward Claimed';
-        }
-    }
-}
+
 
 // Handling button actions
 

@@ -184,10 +184,10 @@ display: none; /* For Chrome, Safari, and Edge */
         padding: 10px 20px;
         background-color: #000000;
         color: rgb(225, 225, 225);
+        border-radius: 25px;
         font-size: 1em;
         border: none;
         font-weight: bold;
-        cursor: pointer;
     }
 
     .wallet-button {

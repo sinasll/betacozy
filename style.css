@@ -178,6 +178,12 @@ display: none; /* For Chrome, Safari, and Edge */
         font-weight: bold;
         margin-top: 0px;
     }
+    
+    .top-100 {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-top: 0px;
+    }
 
     .wallet-button {
         margin: 20px auto;

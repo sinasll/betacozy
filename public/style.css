@@ -1,0 +1,286 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgb(180, 140, 0);
+    display: flex; 
+    margin: 0;
+    padding: 0;
+    flex-direction: column; 
+    justify-content: flex-start;
+    overflow: hidden;
+    font-family: 'Roboto Mono';
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10px 20px;
+    z-index: 1;
+    position: relative;
+}
+
+.logo {
+    width: 5em;
+    height: auto;
+}
+
+.leaderboard {
+    background-color: #000000;
+    color: white;
+        border-radius: 20px;
+        margin: 0px auto;
+        margin-top: 20px;
+        padding: 20px 10px;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        gap: 5px;
+        height: 400px;
+        max-height: 400px;
+        padding-bottom: 100%;
+
+         /* Hide the scrollbar */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    }
+
+.leaderboard::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Edge */
+}
+
+/* Leaderboard container */
+#leaderboard {
+    font-family: 'Roboto Mono';
+    
+}
+
+/* Leaderboard entry style */
+.leaderboard-entry {
+    display: flex;
+    justify-content: space-between; /* Distribute content across the row */
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #333; /* Divider between entries */
+    color: white;
+    font-family: 'Arial', sans-serif; /* Custom font for readability */
+}
+
+/* Rank number */
+.leaderboard-entry span:first-child {
+    font-size: 15px;
+    font-weight: bold;
+    color: white;  /* Gold color for rank */
+}
+
+/* Username style */
+.leaderboard-entry span:nth-child(2) {
+    font-size: 15px;
+    font-weight: bold;
+    color: white; /* Blue for username */
+}
+
+/* Score style */
+.leaderboard-entry span:last-child {
+    font-size: 15px;
+    font-weight: bold;
+    color: white; /* Green for score */
+}
+
+/* Highlight the top 3 leaderboard entries */
+.leaderboard-entry:nth-child(1) span:first-child {
+    color: white; /* Gold for rank 1 */
+}
+
+.leaderboard-entry:nth-child(2) span:first-child {
+    color: white; /* Silver for rank 2 */
+}
+
+.leaderboard-entry:nth-child(3) span:first-child {
+    color: white; /* Bronze for rank 3 */
+}
+
+
+.friends-list {
+    background-color: #000000;
+    border-radius: 20px;
+    margin: 0px auto;
+    padding: 20px 10px;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    gap: 5px;
+    height: 400px;
+    max-height: 400px;
+    padding-bottom: 100%;
+
+    /* Hide the scrollbar */
+scrollbar-width: none; /* For Firefox */
+-ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.friends-list::-webkit-scrollbar::-webkit-scrollbar {
+display: none; /* For Chrome, Safari, and Edge */
+}
+
+.friends {
+    background-color: rgb(20, 20, 20);
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 30px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.users {
+    background-color: rgb(20, 20, 20);
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 30px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+
+    .user-info {
+        text-align: center;
+        padding: 0px;
+    }
+
+    #score {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-top: 0px;
+    }
+
+    #username {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-top: 0px;
+    }
+
+    .wallet-button {
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #000000;
+        color: rgb(225, 225, 225);
+        border-radius: 25px;
+        font-size: 1em;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .invite {
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #000000;
+        color: rgb(225, 225, 225);
+        border-radius: 25px;
+        font-size: 1em;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .tasks-box {
+        background-color: #000000;
+        border-radius: 20px;
+        margin: 0px auto;
+        padding: 20px 10px;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        gap: 5px;
+        height: 400px;
+        max-height: 400px;
+        padding-bottom: 100%;
+        
+
+        /* Hide the scrollbar */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    }
+
+.tasks-box::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Edge */
+}
+
+    .task {
+        background-color: rgb(20, 20, 20);
+        color: white;
+        border-radius: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 15px 10px;
+        font-weight: bold;
+        margin-top: 0px;
+        margin-bottom: 10px;
+    }
+
+    .prize {
+        font-size: 0.7em;
+        display: flex;
+        align-items: center;
+    }
+
+    .claim-btn {
+        padding: 10px 20px;
+        background-color: black;
+        color: rgb(225, 225, 225);
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .nav {
+        position: fixed; 
+        bottom: 0;
+        left: 0; 
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: #000000;
+        padding: 30px 0px;
+        z-index: 10;
+    }
+    
+
+    .nav-link {
+        background-color: rgb(225, 225, 225) ;
+        color: black;
+        text-decoration: none;
+        font-size: 1em;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+    }

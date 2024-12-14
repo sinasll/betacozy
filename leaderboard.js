@@ -110,8 +110,11 @@ function displayLeaderboard(data) {
   const leaderboardElement = document.getElementById('leaderboard');
   leaderboardElement.innerHTML = ''; // Clear previous content
 
+  // Slice the data to get the top 100 users
+  const top100Data = data.slice(0, 100);
+
   // Create a list of leaderboard entries
-  data.forEach((user, index) => {
+  top100Data.forEach((user, index) => {
     const userDiv = document.createElement('div');
     userDiv.classList.add('leaderboard-entry');
     

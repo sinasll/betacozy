@@ -69,6 +69,36 @@ function updateScore(newScore) {
     document.getElementById('score').innerText = newScore;
 }
 
+// Function to claim reward for completing a task
+function claimReward(taskNumber) {
+    const score = parseInt(localStorage.getItem('score')) || 0;
+    const taskClaimButton = document.getElementById(`task${taskNumber}Claim`);
+
+    // Reward the player with 10 points for each task completed
+    const newScore = score + 10;
+
+    // Update the score and localStorage
+    updateScore(newScore);
+
+    // Disable the claim button for this task after reward
+    taskClaimButton.disabled = true;
+    taskClaimButton.innerText = 'Reward Claimed';
+
+    // Mark the task as completed in localStorage
+    localStorage.setItem(`task${taskNumber}Completed`, true);
+}
+
+// Function to check and disable completed tasks
+function checkCompletedTasks() {
+    for (let i = 1; i <= 8; i++) {
+        if (localStorage.getItem(`task${i}Completed`) === 'true') {
+            const taskClaimButton = document.getElementById(`task${i}Claim`);
+            taskClaimButton.disabled = true;
+            taskClaimButton.innerText = 'Reward Claimed';
+        }
+    }
+}
+
 // Handling button actions
 
 // Function for "MINING" button
@@ -84,98 +114,9 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
-let playerScore = parseInt(localStorage.getItem('playerScore')) || 0; // Fetch player score or initialize to 0
-
-// Define all tasks with links and prizes
-const tasks = {
-    1: {
-        link: "https://example.com/join-cozy-community", // Task 1 link
-        prize: 100 // Task 1 prize in $COZY
-    },
-    2: {
-        link: "https://example.com/follow-cozy-on-x", // Task 2 link
-        prize: 100 // Task 2 prize in $COZY
-    },
-    3: {
-        link: "https://example.com/follow-cozy-on-instagram", // Task 3 link
-        prize: 100 // Task 3 prize in $COZY
-    },
-    4: {
-        link: "https://example.com/subscribe-cozy-on-youtube", // Task 4 link
-        prize: 100 // Task 4 prize in $COZY
-    },
-    5: {
-        link: "https://example.com/watch-cozy-vibes", // Task 5 link
-        prize: 50 // Task 5 prize in $COZY
-    },
-    6: {
-        link: "https://example.com/listen-cozy-radio", // Task 6 link
-        prize: 50 // Task 6 prize in $COZY
-    },
-    7: {
-        link: "https://example.com/retweet-cozy-roadmap", // Task 7 link
-        prize: 50 // Task 7 prize in $COZY
-    },
-    8: {
-        link: "https://example.com/retweet-cozy-post", // Task 8 link
-        prize: 50 // Task 8 prize in $COZY
-    },
-    // Add more tasks here as needed
-};
-
-// Function to handle task claim
-function claimTask(taskId) {
-    if (tasks[taskId]) {
-        const taskLink = tasks[taskId].link;
-
-        // Mark the task as started in localStorage
-        localStorage.setItem(`task${taskId}Started`, true);
-
-        // Open the task in a new tab
-        window.open(taskLink, '_blank');
-
-        // Notify the user
-        alert("Task started! Complete it and return to claim your reward.");
-    } else {
-        alert("Invalid task.");
-    }
-}
-
-// Function to reward the player
-function rewardPlayer(prizeAmount, taskId) {
-    // Parse current score from localStorage and convert it to an integer
-    playerScore = parseInt(localStorage.getItem('playerScore')) || 0;
-
-    // Add the prize amount to the player's score
-    playerScore += prizeAmount;
-
-    // Save the updated score in localStorage
-    localStorage.setItem('playerScore', playerScore);
-
-    // Update the UI to reflect the new score
-    document.getElementById('score').innerText = playerScore;
-
-    // Notify the player
-    alert(`Task ${taskId} completed! You have been rewarded ${prizeAmount} $COZY! Your new score is: ${playerScore}`);
-}
-
-// Function to check completed tasks and reward the player
-function checkCompletedTasks() {
-    for (let taskId in tasks) {
-        // If the task is marked as started and not yet rewarded
-        if (localStorage.getItem(`task${taskId}Started`) === 'true') {
-            // Reward the user
-            rewardPlayer(tasks[taskId].prize, taskId);
-
-            // Mark the task as rewarded
-            localStorage.removeItem(`task${taskId}Started`);
-        }
-    }
-}
-
 // Initial setup when the page loads
 window.onload = function () {
     getUsername(); // Fetch and display username
     getScore(); // Fetch and display score
-    checkCompletedTasks(); // Check and reward completed tasks
+    checkCompletedTasks(); // Check and disable completed tasks
 };

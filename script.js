@@ -1,12 +1,12 @@
 // Function to generate a random guest username
 function generateRandomGuestUsername() {
-    const randomString = Math.random().toString(36).substring(2, 10);  // Generate a random alphanumeric string
-    return `guest${randomString}`;  // Return the random guest username
+    const randomString = Math.random().toString(36).substring(2, 10); // Generate a random alphanumeric string
+    return `guest${randomString}`; // Return the random guest username
 }
 
 // Initialize the Telegram Web App
 if (window.Telegram && window.Telegram.WebApp) {
-    Telegram.WebApp.ready();  // Initialize the WebApp
+    Telegram.WebApp.ready(); // Initialize the WebApp
 
     // Get user information
     const user = Telegram.WebApp.initDataUnsafe.user;
@@ -84,7 +84,7 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
-let playerScore = localStorage.getItem('playerScore') || 0; // Fetch player score or initialize to 0
+let playerScore = parseInt(localStorage.getItem('playerScore')) || 0; // Fetch player score or initialize to 0
 
 // Define all tasks with links and prizes
 const tasks = {
@@ -125,53 +125,57 @@ const tasks = {
 
 // Function to handle task claim
 function claimTask(taskId) {
-    // Check if the taskId exists in the tasks object
     if (tasks[taskId]) {
-        // Get task link and prize from the tasks object
         const taskLink = tasks[taskId].link;
-        const taskPrize = tasks[taskId].prize;
 
-        // Open the task link in a new tab and apply the reward after returning
-        window.open(taskLink, '_blank'); // Open the task in a new tab
+        // Mark the task as started in localStorage
+        localStorage.setItem(`task${taskId}Started`, true);
 
-        // Save the task as completed (for later reward application)
-        localStorage.setItem(`task${taskId}Completed`, true);
+        // Open the task in a new tab
+        window.open(taskLink, '_blank');
 
-        // Notify the user to return to claim the reward
-        alert("You have started the task! Return to the page to claim your reward.");
+        // Notify the user
+        alert("Task started! Complete it and return to claim your reward.");
     } else {
-        alert("Invalid task");
-    }
-}
-
-// Function to check completed tasks and reward the player
-function checkCompletedTasks() {
-    for (let taskId in tasks) {
-        if (localStorage.getItem(`task${taskId}Completed`) === 'true') {
-            rewardPlayer(tasks[taskId].prize, taskId); // Reward the player
-            localStorage.removeItem(`task${taskId}Completed`); // Remove task completion status
-        }
+        alert("Invalid task.");
     }
 }
 
 // Function to reward the player
 function rewardPlayer(prizeAmount, taskId) {
-    // Add the prize to the player's score
+    // Parse current score from localStorage and convert it to an integer
+    playerScore = parseInt(localStorage.getItem('playerScore')) || 0;
+
+    // Add the prize amount to the player's score
     playerScore += prizeAmount;
 
-    // Save the updated score (e.g., send to server, or local storage for now)
+    // Save the updated score in localStorage
     localStorage.setItem('playerScore', playerScore);
 
-    // You can also update the UI to reflect the new score
+    // Update the UI to reflect the new score
+    document.getElementById('score').innerText = playerScore;
+
+    // Notify the player
     alert(`Task ${taskId} completed! You have been rewarded ${prizeAmount} $COZY! Your new score is: ${playerScore}`);
 }
 
-// Check for completed tasks when the page is loaded
-window.onload = checkCompletedTasks;
+// Function to check completed tasks and reward the player
+function checkCompletedTasks() {
+    for (let taskId in tasks) {
+        // If the task is marked as started and not yet rewarded
+        if (localStorage.getItem(`task${taskId}Started`) === 'true') {
+            // Reward the user
+            rewardPlayer(tasks[taskId].prize, taskId);
 
+            // Mark the task as rewarded
+            localStorage.removeItem(`task${taskId}Started`);
+        }
+    }
+}
 
 // Initial setup when the page loads
-window.onload = function() {
+window.onload = function () {
     getUsername(); // Fetch and display username
     getScore(); // Fetch and display score
-} 
+    checkCompletedTasks(); // Check and reward completed tasks
+};

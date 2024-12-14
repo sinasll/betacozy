@@ -27,7 +27,7 @@ header {
 .logo {
     width: 5em;
     height: auto;
-    border: 5px solid white;
+    border: 1px solid white;
 }
 
 .leaderboard {

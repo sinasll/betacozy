@@ -1,113 +1,119 @@
 // Function to generate a random guest username
 function generateRandomGuestUsername() {
-    const randomString = Math.random().toString(36).substring(2, 10); // Generate a random alphanumeric string
-    return `guest${randomString}`; // Return the random guest username
+    const randomString = Math.random().toString(36).substring(2, 10); // Generate random alphanumeric string
+    return `guest${randomString}`; // Return a guest username
 }
 
-// Initialize the Telegram Web App
-if (window.Telegram && window.Telegram.WebApp) {
-    Telegram.WebApp.ready(); // Initialize the WebApp
-
-    // Get user information
-    const user = Telegram.WebApp.initDataUnsafe.user;
-
-    // Check if username exists
-    if (user && user.username) {
-        // Store the username only if it hasn't been stored already
-        if (!localStorage.getItem('username')) {
-            localStorage.setItem('username', user.username);
-            localStorage.setItem('score', 0); // Initialize score to 0
-        }
-        document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
-    } else {
-        // Generate a random guest username if no Telegram username is available
-        if (!localStorage.getItem('username')) {
-            const guestUsername = generateRandomGuestUsername();
-            localStorage.setItem('username', guestUsername);
-            localStorage.setItem('score', 0); // Default score for guests
-        }
-        document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
-    }
-} else {
-    // Fallback for non-WebApp environments
-    console.log('Telegram WebApp is not available.');
-    // If no username exists in localStorage, generate one and store it
-    if (!localStorage.getItem('username')) {
-        const guestUsername = generateRandomGuestUsername();
-        localStorage.setItem('username', guestUsername); // Store guest username
-        localStorage.setItem('score', 0); // Default score for guests
-    }
-    document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
-}
-
-// Function to get and display username from localStorage
-function getUsername() {
-    const storedUsername = localStorage.getItem('username');
-    if (storedUsername) {
-        document.getElementById('username').innerText = `@${storedUsername}`;
-    } else {
-        const guestUsername = generateRandomGuestUsername();
-        localStorage.setItem('username', guestUsername); // Store guest username
-        document.getElementById('username').innerText = `@${guestUsername}`;
-    }
-}
-
-// Function to get and display score from localStorage
-function getScore() {
-    const storedScore = localStorage.getItem('score');
-    if (storedScore) {
-        document.getElementById('score').innerText = storedScore;
-    } else {
-        localStorage.setItem('score', 0); // Default score is 0
-        document.getElementById('score').innerText = 0;
-    }
-}
-
-// Function to update the score in localStorage and on the page
-async function updateScore(newScore) {
-    localStorage.setItem('score', newScore);
-    document.getElementById('score').innerText = newScore;
-
-    // Send updated score to server (using fetch, axios, etc.)
+// Sync local data with the server
+async function syncWithServer() {
     const username = localStorage.getItem('username');
-    await fetch('/update-score', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            score: newScore,
-        }),
-    }).catch(error => {
+
+    if (!username) {
+        console.log('No username found in localStorage.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/user/${username}`);
+        if (response.ok) {
+            const user = await response.json();
+            localStorage.setItem('score', user.score); // Sync score from server
+        } else {
+            console.log('User not found on the server.');
+        }
+    } catch (error) {
+        console.error('Error syncing with server:', error);
+    }
+}
+
+// Update the score on the server and locally
+async function updateScore(newScore) {
+    const username = localStorage.getItem('username');
+    const userId = localStorage.getItem('user_id');
+
+    if (!username || !userId) {
+        console.log('User data missing.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/user/${userId}/score`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ score: newScore }),
+        });
+
+        if (response.ok) {
+            localStorage.setItem('score', newScore);
+            document.getElementById('score').innerText = newScore;
+        } else {
+            console.error('Failed to update score on server:', await response.text());
+        }
+    } catch (error) {
         console.error('Error updating score to server:', error);
+    }
+}
+
+// Initialize username and score
+function initializeUserData() {
+    const username = localStorage.getItem('username');
+    if (!username) {
+        const guestUsername = generateRandomGuestUsername();
+        localStorage.setItem('username', guestUsername);
+        localStorage.setItem('score', 0); // Default score for guests
+        document.getElementById('username').innerText = `@${guestUsername}`;
+    } else {
+        document.getElementById('username').innerText = `@${username}`;
+    }
+}
+
+// Claim reward for a task
+function claimReward(taskNumber) {
+    const currentScore = parseInt(localStorage.getItem('score'), 10) || 0;
+    const newScore = currentScore + 10; // Example reward value
+
+    updateScore(newScore); // Update score on both server and local
+    localStorage.setItem(`task${taskNumber}Completed`, true);
+
+    const taskButton = document.getElementById(`task${taskNumber}Claim`);
+    if (taskButton) {
+        taskButton.disabled = true;
+        taskButton.innerText = 'Reward Claimed';
+    }
+}
+
+// Check and disable completed tasks
+function checkCompletedTasks() {
+    const taskButtons = document.querySelectorAll('[id^="task"]');
+    taskButtons.forEach((button) => {
+        const taskNumber = button.id.replace('task', '').replace('Claim', '');
+        const isTaskCompleted = localStorage.getItem(`task${taskNumber}Completed`);
+        if (isTaskCompleted) {
+            button.disabled = true;
+            button.innerText = 'Reward Claimed';
+        }
     });
 }
 
-// Function to claim reward for completing a task
-function claimReward(taskNumber) {
-    const score = parseInt(localStorage.getItem('score')) || 0;
-    const taskClaimButton = document.getElementById(`task${taskNumber}Claim`);
-
-    // Reward the player with 10 points for each task completed
-    const newScore = score + 10;
-
-    // Update the score and localStorage
-    updateScore(newScore);
-
-    // Disable the claim button for this task after reward
-    taskClaimButton.disabled = true;
-    taskClaimButton.innerText = 'Reward Claimed';
-
-    // Mark the task as completed in localStorage
-    localStorage.setItem(`task${taskNumber}Completed`, true);
+// Fetch leaderboard data and render it
+async function fetchLeaderboard() {
+    try {
+        const response = await fetch('/api/leaderboard');
+        if (response.ok) {
+            const leaderboard = await response.json();
+            const leaderboardContainer = document.getElementById('leaderboard');
+            leaderboardContainer.innerHTML = leaderboard
+                .map((user, index) => `<li>${index + 1}. @${user.username} - ${user.score} points</li>`)
+                .join('');
+        } else {
+            console.error('Failed to fetch leaderboard:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
 }
 
-
-
-// Handling button actions
-
-// Function for "MINING" button
+// Navigation buttons
 function goHome() {
     window.location.href = "index.html";
 }
@@ -120,9 +126,17 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
-// Initial setup when the page loads
-window.onload = function () {
-    getUsername(); // Fetch and display username
-    getScore(); // Fetch and display score
+// Initialize the page
+window.onload = async function () {
+    initializeUserData(); // Initialize username and score
+    await syncWithServer(); // Sync with the server
+    const storedScore = localStorage.getItem('score');
+    document.getElementById('score').innerText = storedScore || 0;
+
     checkCompletedTasks(); // Check and disable completed tasks
+
+    // If on the leaderboard page, fetch and display leaderboard data
+    if (document.getElementById('leaderboard')) {
+        fetchLeaderboard();
+    }
 };

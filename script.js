@@ -73,40 +73,48 @@ function displayUserInfo() {
     document.getElementById('score').innerText = score;
 }
 
-async function updateScoreOnServer(newScore) {
+// Function to update the user's score in localStorage and MongoDB
+async function updateScoreInLocalStorage(newScore) {
+    // Update the score in localStorage
+    localStorage.setItem('score', newScore);
+    document.getElementById('score').innerText = newScore;
+
+    // Now send the updated score to the server (MongoDB)
     const userId = localStorage.getItem('user_id');
+    if (userId) {
+        try {
+            const response = await fetch(`/api/user/${userId}/score`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ score: newScore }),
+            });
 
-    if (!userId) {
-        console.error('User ID not found in localStorage');
-        return;
-    }
+            if (!response.ok) {
+                throw new Error('Failed to update score on server');
+            }
 
-    try {
-        const response = await fetch(`/api/user/${userId}/score`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ score: newScore }),
-        });
-
-        if (response.ok) {
+            // Optionally, you could handle the server response here
             const data = await response.json();
-            localStorage.setItem('score', data.user.score);
-            document.getElementById('score').innerText = data.user.score;
-        } else {
-            console.error('Failed to update score:', await response.text());
+            console.log('Score updated in MongoDB:', data);
+        } catch (error) {
+            console.error('Error updating score on server:', error);
         }
-    } catch (error) {
-        console.error('Error updating score on server:', error);
+    } else {
+        console.error('User ID is not available.');
     }
 }
 
+// Function to claim reward and update the user's score
 function claimReward(taskNumber) {
     const currentScore = parseInt(localStorage.getItem('score')) || 0;
     const taskButton = document.getElementById(`task${taskNumber}Claim`);
+    const rewardAmount = 10; // Reward amount for each task
 
-    const newScore = currentScore + 10;
-    updateScoreOnServer(newScore);
+    // Update the score
+    const newScore = currentScore + rewardAmount;
+    updateScoreInLocalStorage(newScore);
 
+    // Disable the task button and update its text
     taskButton.disabled = true;
     taskButton.innerText = 'Reward Claimed';
     localStorage.setItem(`task${taskNumber}Completed`, true);
@@ -143,3 +151,52 @@ window.onload = async function () {
         fetchLeaderboard();
     }
 };
+
+// Sync the user data with the server and update localStorage
+async function syncWithServer() {
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+        console.error('No user ID found!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/user/${userId}`);
+        const data = await response.json();
+        if (data && data.score !== undefined) {
+            localStorage.setItem('score', data.score);
+            displayUserInfo();
+        }
+    } catch (error) {
+        console.error('Error syncing with the server:', error);
+    }
+}
+
+// Check and disable tasks that are already completed
+function checkCompletedTasks() {
+    for (let i = 1; i <= 5; i++) {
+        if (localStorage.getItem(`task${i}Completed`)) {
+            const taskButton = document.getElementById(`task${i}Claim`);
+            taskButton.disabled = true;
+            taskButton.innerText = 'Reward Claimed';
+        }
+    }
+}
+
+// Fetch leaderboard data and display it
+function fetchLeaderboard() {
+    fetch('/api/leaderboard')
+        .then(response => response.json())
+        .then(data => {
+            const leaderboardElement = document.getElementById('leaderboard');
+            data.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'leaderboard-item';
+                userElement.innerText = `@${user.username}: ${user.score}`;
+                leaderboardElement.appendChild(userElement);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching leaderboard:', error);
+        });
+}

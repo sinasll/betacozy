@@ -1,38 +1,83 @@
 // Function to generate a random guest username
 function generateRandomGuestUsername() {
-    const randomString = Math.random().toString(36).substring(2, 10); // Generate random alphanumeric string
-    return `guest${randomString}`; // Return a guest username
+    const randomString = Math.random().toString(36).substring(2, 10);
+    return `guest${randomString}`;
 }
 
-// Sync local data with the server
-async function syncWithServer() {
-    const username = localStorage.getItem('username');
+// Initialize the Telegram Web App
+if (window.Telegram && window.Telegram.WebApp) {
+    Telegram.WebApp.ready();
 
-    if (!username) {
-        console.log('No username found in localStorage.');
-        return;
-    }
+    const user = Telegram.WebApp.initDataUnsafe.user;
 
-    try {
-        const response = await fetch(`/api/user/${username}`);
-        if (response.ok) {
-            const user = await response.json();
-            localStorage.setItem('score', user.score); // Sync score from server
-        } else {
-            console.log('User not found on the server.');
+    if (user && user.username) {
+        if (!localStorage.getItem('username')) {
+            localStorage.setItem('username', user.username);
+            fetchUserFromServer(user.username);
         }
-    } catch (error) {
-        console.error('Error syncing with server:', error);
+    } else {
+        if (!localStorage.getItem('username')) {
+            const guestUsername = generateRandomGuestUsername();
+            localStorage.setItem('username', guestUsername);
+            createUserOnServer(guestUsername);
+        }
+    }
+} else {
+    console.log('Telegram WebApp is not available.');
+    if (!localStorage.getItem('username')) {
+        const guestUsername = generateRandomGuestUsername();
+        localStorage.setItem('username', guestUsername);
+        createUserOnServer(guestUsername);
     }
 }
 
-// Update the score on the server and locally
-async function updateScore(newScore) {
+function fetchUserFromServer(username) {
+    fetch(`/api/user/${username}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.score !== undefined) {
+                localStorage.setItem('user_id', data._id);
+                localStorage.setItem('score', data.score);
+                displayUserInfo();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user:', error);
+        });
+}
+
+function createUserOnServer(username) {
+    fetch('/api/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data._id) {
+                localStorage.setItem('user_id', data._id);
+                localStorage.setItem('score', data.score || 0);
+                displayUserInfo();
+            }
+        })
+        .catch(error => {
+            console.error('Error creating user:', error);
+        });
+}
+
+function displayUserInfo() {
     const username = localStorage.getItem('username');
+    const score = localStorage.getItem('score') || 0;
+
+    document.getElementById('username').innerText = `@${username}`;
+    document.getElementById('score').innerText = score;
+}
+
+async function updateScoreOnServer(newScore) {
     const userId = localStorage.getItem('user_id');
 
-    if (!username || !userId) {
-        console.log('User data missing.');
+    if (!userId) {
+        console.error('User ID not found in localStorage');
         return;
     }
 
@@ -44,74 +89,32 @@ async function updateScore(newScore) {
         });
 
         if (response.ok) {
-            localStorage.setItem('score', newScore);
-            document.getElementById('score').innerText = newScore;
+            const data = await response.json();
+            localStorage.setItem('score', data.user.score);
+            document.getElementById('score').innerText = data.user.score;
         } else {
-            console.error('Failed to update score on server:', await response.text());
+            console.error('Failed to update score:', await response.text());
         }
     } catch (error) {
-        console.error('Error updating score to server:', error);
+        console.error('Error updating score on server:', error);
     }
 }
 
-// Initialize username and score
-function initializeUserData() {
-    const username = localStorage.getItem('username');
-    if (!username) {
-        const guestUsername = generateRandomGuestUsername();
-        localStorage.setItem('username', guestUsername);
-        localStorage.setItem('score', 0); // Default score for guests
-        document.getElementById('username').innerText = `@${guestUsername}`;
-    } else {
-        document.getElementById('username').innerText = `@${username}`;
-    }
-}
-
-// Claim reward for a task
 function claimReward(taskNumber) {
-    const currentScore = parseInt(localStorage.getItem('score'), 10) || 0;
-    const newScore = currentScore + 10; // Example reward value
-
-    updateScore(newScore); // Update score on both server and local
-    localStorage.setItem(`task${taskNumber}Completed`, true);
-
+    const currentScore = parseInt(localStorage.getItem('score')) || 0;
     const taskButton = document.getElementById(`task${taskNumber}Claim`);
-    if (taskButton) {
-        taskButton.disabled = true;
-        taskButton.innerText = 'Reward Claimed';
-    }
+
+    const newScore = currentScore + 10;
+    updateScoreOnServer(newScore);
+
+    taskButton.disabled = true;
+    taskButton.innerText = 'Reward Claimed';
+    localStorage.setItem(`task${taskNumber}Completed`, true);
 }
 
-// Check and disable completed tasks
-function checkCompletedTasks() {
-    const taskButtons = document.querySelectorAll('[id^="task"]');
-    taskButtons.forEach((button) => {
-        const taskNumber = button.id.replace('task', '').replace('Claim', '');
-        const isTaskCompleted = localStorage.getItem(`task${taskNumber}Completed`);
-        if (isTaskCompleted) {
-            button.disabled = true;
-            button.innerText = 'Reward Claimed';
-        }
-    });
-}
-
-// Fetch leaderboard data and render it
-async function fetchLeaderboard() {
-    try {
-        const response = await fetch('/api/leaderboard');
-        if (response.ok) {
-            const leaderboard = await response.json();
-            const leaderboardContainer = document.getElementById('leaderboard');
-            leaderboardContainer.innerHTML = leaderboard
-                .map((user, index) => `<li>${index + 1}. @${user.username} - ${user.score} points</li>`)
-                .join('');
-        } else {
-            console.error('Failed to fetch leaderboard:', await response.text());
-        }
-    } catch (error) {
-        console.error('Error fetching leaderboard:', error);
-    }
-}
+window.onload = function () {
+    displayUserInfo();
+};
 
 // Navigation buttons
 function goHome() {

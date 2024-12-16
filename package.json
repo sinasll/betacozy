@@ -15,10 +15,12 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "ethers": "^6.13.4",
     "express": "^4.21.2",
     "mongoose": "^8.9.0",
     "node-telegram-bot-api": "^0.66.0",
-    "telegraf": "^4.16.3"
+    "telegraf": "^4.16.3",
+    "web3": "^4.16.0"
   },
   "engines": {
     "node": ">=14.0.0"

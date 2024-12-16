@@ -169,7 +169,7 @@ function claimDailyReward() {
         // Update the user's score
         let currentScore = parseFloat(localStorage.getItem('score')) || 0;
         currentScore += rewardCoins;
-        updateScore(currentScore);
+        updateScore(currentScore); // Update score both locally and on the backend
 
         // Update the last claimed time and lock the reward for 24 hours
         localStorage.setItem('lastClaimed', currentTime.toString());
@@ -196,7 +196,7 @@ function startCountdown() {
         if (remainingTime <= 0) {
             clearInterval(interval);
             countdownElement.disabled = false;
-            countdownElement.innerText = 'DAILY REWARD';
+            countdownElement.innerText = 'DAILY REWARD'; // Reset the button text
         } else {
             const remainingHours = Math.floor(remainingTime / (1000 * 60 * 60));
             const remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));

@@ -2,11 +2,7 @@
     "version": 2,
     "routes": [
       {
-        "src": "/api/leaderboard",
-        "dest": "/server.js"
-      },
-      {
-        "src": "/api/user/(.*)",
+        "src": "/api/(.*)",
         "dest": "/server.js"
       },
       {

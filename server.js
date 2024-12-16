@@ -3,16 +3,12 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const User = require('./models/User');
 const cors = require('cors');
-const path = require('path');
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());  // For parsing application/json
-
-// Serve static files from "public" directory (if you have a static front-end)
-app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB connection using .env variable for consistency
 mongoose.connect(process.env.MONGO_URI)

@@ -1,37 +1,29 @@
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const User = require('./models/User'); // Assuming you have a User model
 const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json()); // For parsing application/json
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
+// Serve static files from the "public" folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// MongoDB connection (if needed)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  .catch(err => console.error('MongoDB connection error:', err));
 
-// API route: Update score for a user
+// API route for leaderboard or user score
 app.put('/api/user/:userId/score', async (req, res) => {
-  const { userId } = req.params;
-  const { score } = req.body;
+  // Your existing logic for updating score
+});
 
-  try {
-    const user = await User.findByIdAndUpdate(userId, { score }, { new: true });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.json({ message: 'Score updated successfully', user });
-  } catch (error) {
-    console.error('Error updating score:', error);
-    res.status(500).json({ message: 'Error updating score' });
-  }
+// Handle root route and serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Export the app for Vercel

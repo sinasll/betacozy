@@ -30,6 +30,32 @@ header {
     border: 1px solid white;
 }
 
+.main-box {
+    background-color: #000000;
+    color: white;
+        border-radius: 20px;
+        margin: 0px auto;
+        margin-top: 20px;
+        padding: 20px 10px;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        gap: 5px;
+        
+       
+        padding-bottom: 100%;
+        scrollbar-width: none;
+         -ms-overflow-style: none;
+}
+
+.main-box::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Edge */
+}
+
+
 .leaderboard {
     background-color: #000000;
     color: white;
@@ -191,12 +217,36 @@ display: none; /* For Chrome, Safari, and Edge */
         font-weight: bold;
     }
 
+    .mining-button {
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: rgb(20, 20, 20);
+        color: rgb(225, 225, 225);
+        border-radius: 20px;
+        font-size: 1em;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .daily-reward-button {
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: rgb(20, 20, 20);
+        color: rgb(225, 225, 225);
+        border-radius: 20px;
+        font-size: 1em;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
     .wallet-button {
         margin: 20px auto;
         padding: 10px 20px;
-        background-color: #000000;
+        background-color: rgb(20, 20, 20);
         color: rgb(225, 225, 225);
-        border-radius: 25px;
+        border-radius: 20px;
         font-size: 1em;
         border: none;
         font-weight: bold;

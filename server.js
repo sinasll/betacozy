@@ -33,6 +33,18 @@ app.put('/api/user/:userId/score', async (req, res) => {
     }
 });
 
+// Get leaderboard - fetch users sorted by score
+app.get('/api/leaderboard', async (req, res) => {
+    try {
+        // Fetch users and sort by score in descending order, limiting to top 10
+        const leaderboard = await User.find().sort({ score: -1 }).limit(10); // Adjust limit as needed
+        res.json(leaderboard);
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+        res.status(500).json({ message: 'Error fetching leaderboard' });
+    }
+});
+
 // Start server
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running on port 3000');

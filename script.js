@@ -1,130 +1,143 @@
 // Function to generate a random guest username
 function generateRandomGuestUsername() {
-    const randomString = Math.random().toString(36).substring(2, 10);
-    return `guest${randomString}`;
+    const randomString = Math.random().toString(36).substring(2, 10); // Generate a random alphanumeric string
+    return `guest${randomString}`; // Return the random guest username
 }
 
 // Initialize the Telegram Web App
 if (window.Telegram && window.Telegram.WebApp) {
-    Telegram.WebApp.ready();
+    Telegram.WebApp.ready(); // Initialize the WebApp
 
+    // Get user information
     const user = Telegram.WebApp.initDataUnsafe.user;
 
+    // Check if username exists
     if (user && user.username) {
+        // Store the username only if it hasn't been stored already
         if (!localStorage.getItem('username')) {
             localStorage.setItem('username', user.username);
-            fetchUserFromServer(user.username);
+            localStorage.setItem('score', '0.00'); // Initialize score to 0.00
         }
+        document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
     } else {
+        // Generate a random guest username if no Telegram username is available
         if (!localStorage.getItem('username')) {
             const guestUsername = generateRandomGuestUsername();
             localStorage.setItem('username', guestUsername);
-            createUserOnServer(guestUsername);
+            localStorage.setItem('score', '0.00'); // Default score for guests
         }
+        document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
     }
 } else {
+    // Fallback for non-WebApp environments
     console.log('Telegram WebApp is not available.');
+    // If no username exists in localStorage, generate one and store it
     if (!localStorage.getItem('username')) {
         const guestUsername = generateRandomGuestUsername();
-        localStorage.setItem('username', guestUsername);
-        createUserOnServer(guestUsername);
+        localStorage.setItem('username', guestUsername); // Store guest username
+        localStorage.setItem('score', '0.00'); // Default score for guests
     }
+    document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
 }
 
-function fetchUserFromServer(username) {
-    fetch(`/api/user/${username}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.score !== undefined) {
-                localStorage.setItem('user_id', data._id);
-                localStorage.setItem('score', data.score);
-                displayUserInfo();
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user:', error);
-        });
-}
-
-function createUserOnServer(username) {
-    fetch('/api/user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data && data._id) {
-                localStorage.setItem('user_id', data._id);
-                localStorage.setItem('score', data.score || 0);
-                displayUserInfo();
-            }
-        })
-        .catch(error => {
-            console.error('Error creating user:', error);
-        });
-}
-
-function displayUserInfo() {
-    const username = localStorage.getItem('username');
-    const score = localStorage.getItem('score') || 0;
-
-    document.getElementById('username').innerText = `@${username}`;
-    document.getElementById('score').innerText = score;
-}
-
-// Function to update the user's score in localStorage and MongoDB
-async function updateScoreInLocalStorage(newScore) {
-    // Update the score in localStorage
-    localStorage.setItem('score', newScore);
-    document.getElementById('score').innerText = newScore;
-
-    // Now send the updated score to the server (MongoDB)
-    const userId = localStorage.getItem('user_id');
-    if (userId) {
-        try {
-            const response = await fetch(`/api/user/${userId}/score`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ score: newScore }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update score on server');
-            }
-
-            // Optionally, you could handle the server response here
-            const data = await response.json();
-            console.log('Score updated in MongoDB:', data);
-        } catch (error) {
-            console.error('Error updating score on server:', error);
-        }
+// Function to get and display username from localStorage
+function getUsername() {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+        document.getElementById('username').innerText = `@${storedUsername}`;
     } else {
-        console.error('User ID is not available.');
+        const guestUsername = generateRandomGuestUsername();
+        localStorage.setItem('username', guestUsername); // Store guest username
+        document.getElementById('username').innerText = `@${guestUsername}`;
     }
 }
 
-// Function to claim reward and update the user's score
-function claimReward(taskNumber) {
-    const currentScore = parseInt(localStorage.getItem('score')) || 0;
-    const taskButton = document.getElementById(`task${taskNumber}Claim`);
-    const rewardAmount = 10; // Reward amount for each task
-
-    // Update the score
-    const newScore = currentScore + rewardAmount;
-    updateScoreInLocalStorage(newScore);
-
-    // Disable the task button and update its text
-    taskButton.disabled = true;
-    taskButton.innerText = 'Reward Claimed';
-    localStorage.setItem(`task${taskNumber}Completed`, true);
+// Function to get and display score from localStorage
+function getScore() {
+    const storedScore = localStorage.getItem('score');
+    if (storedScore) {
+        document.getElementById('score').innerText = parseFloat(storedScore).toFixed(2); // Always display two decimals
+    } else {
+        localStorage.setItem('score', '0.00'); // Default score is 0.00
+        document.getElementById('score').innerText = '0.00';
+    }
 }
 
-window.onload = function () {
-    displayUserInfo();
-};
+// Function to update the score in localStorage, on the page, and send it to MongoDB
+function updateScore(newScore) {
+    const formattedScore = parseFloat(newScore).toFixed(2); // Ensure two decimal places
+    localStorage.setItem('score', formattedScore);
+    document.getElementById('score').innerText = formattedScore;
 
-// Navigation buttons
+    // Send the updated score to the backend
+    const username = localStorage.getItem('username');
+    
+    // Sending a POST request to the backend to save the score in MongoDB
+    fetch('http://localhost:3000/update-score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            score: formattedScore
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Score updated successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error updating score:', error);
+    });
+}
+
+// Function to handle mining logic
+function startMining() {
+    // Check if mining is already active
+    if (localStorage.getItem('miningActive') === 'true') {
+        resumeMining();
+        return;
+    }
+
+    // Activate mining
+    localStorage.setItem('miningActive', 'true');
+    localStorage.setItem('lastMiningTime', Date.now()); // Save the timestamp of when mining starts
+
+    document.querySelector('.mining-button').disabled = true;
+    document.querySelector('.mining-button').textContent = 'MINING 0.01 $COZY per second';
+
+    resumeMining(); // Start or resume mining
+}
+
+// Function to resume mining
+function resumeMining() {
+    if (localStorage.getItem('miningActive') === 'true') {
+        let currentScore = parseFloat(localStorage.getItem('score')) || 0;
+        const lastMiningTime = parseInt(localStorage.getItem('lastMiningTime')) || Date.now();
+        const elapsedSeconds = Math.floor((Date.now() - lastMiningTime) / 1000);
+
+        // Add mined score based on elapsed time
+        currentScore += elapsedSeconds * 0.01; // 0.01 per second
+        updateScore(currentScore);
+
+        // Update the last mining time
+        localStorage.setItem('lastMiningTime', Date.now());
+
+        // Continue mining every second
+        setInterval(() => {
+            currentScore += 0.01; // Increment by 0.01 every second
+            updateScore(currentScore);
+        }, 1000);
+    }
+}
+
+// Event listener for mining button
+document.querySelector('.mining-button').addEventListener('click', startMining);
+
+// Handling button actions
+
+// Function for NAV buttons
 function goHome() {
     window.location.href = "index.html";
 }
@@ -137,66 +150,15 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
-// Initialize the page
-window.onload = async function () {
-    initializeUserData(); // Initialize username and score
-    await syncWithServer(); // Sync with the server
-    const storedScore = localStorage.getItem('score');
-    document.getElementById('score').innerText = storedScore || 0;
+// Initial setup when the page loads
+window.onload = function() {
+    getUsername(); // Fetch and display username
+    getScore(); // Fetch and display score
 
-    checkCompletedTasks(); // Check and disable completed tasks
-
-    // If on the leaderboard page, fetch and display leaderboard data
-    if (document.getElementById('leaderboard')) {
-        fetchLeaderboard();
+    // Resume mining if it was active
+    if (localStorage.getItem('miningActive') === 'true') {
+        document.querySelector('.mining-button').disabled = true;
+        document.querySelector('.mining-button').textContent = 'MINING 0.01 $COZY per second';
+        resumeMining();
     }
 };
-
-// Sync the user data with the server and update localStorage
-async function syncWithServer() {
-    const userId = localStorage.getItem('user_id');
-    if (!userId) {
-        console.error('No user ID found!');
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/user/${userId}`);
-        const data = await response.json();
-        if (data && data.score !== undefined) {
-            localStorage.setItem('score', data.score);
-            displayUserInfo();
-        }
-    } catch (error) {
-        console.error('Error syncing with the server:', error);
-    }
-}
-
-// Check and disable tasks that are already completed
-function checkCompletedTasks() {
-    for (let i = 1; i <= 5; i++) {
-        if (localStorage.getItem(`task${i}Completed`)) {
-            const taskButton = document.getElementById(`task${i}Claim`);
-            taskButton.disabled = true;
-            taskButton.innerText = 'Reward Claimed';
-        }
-    }
-}
-
-// Fetch leaderboard data and display it
-function fetchLeaderboard() {
-    fetch('/api/leaderboard')
-        .then(response => response.json())
-        .then(data => {
-            const leaderboardElement = document.getElementById('leaderboard');
-            data.forEach(user => {
-                const userElement = document.createElement('div');
-                userElement.className = 'leaderboard-item';
-                userElement.innerText = `@${user.username}: ${user.score}`;
-                leaderboardElement.appendChild(userElement);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching leaderboard:', error);
-        });
-}

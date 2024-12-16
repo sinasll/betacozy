@@ -135,9 +135,31 @@ function displayLeaderboard(data) {
   });
 }
 
+// Function to update the score based on mining progress
+function updateMiningScore() {
+    const miningActive = localStorage.getItem('miningActive') === 'true';
+    if (miningActive) {
+        const storedScore = parseFloat(localStorage.getItem('score')) || 0;
+        const lastMiningTime = parseInt(localStorage.getItem('lastMiningTime')) || Date.now();
+        const elapsedSeconds = Math.floor((Date.now() - lastMiningTime) / 1000);
+
+        // Calculate new score based on elapsed time (e.g., 0.01 points per second)
+        const miningRate = 0.01; // Adjust the mining rate as needed
+        const newScore = storedScore + elapsedSeconds * miningRate;
+
+        // Display the updated score on the page without changing localStorage
+        document.getElementById('score').innerText = newScore.toFixed(2);
+    } else {
+        // If mining is not active, just display the stored score
+        const storedScore = localStorage.getItem('score') || 0;
+        document.getElementById('score').innerText = storedScore;
+    }
+}
+
 // Initial setup when the page loads
 window.onload = function() {
     getUsername(); // Fetch and display username
     getScore(); // Fetch and display score
     fetchLeaderboard(); // Fetch and display leaderboard
+    setInterval(updateMiningScore, 1000); // Update mining score every second
 };

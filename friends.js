@@ -71,7 +71,7 @@ function updateScore(newScore) {
 
 // Handling button actions
 
-// Function for "MINING" button
+// Function for NAV buttons
 function goHome() {
     window.location.href = "index.html";
 }
@@ -84,25 +84,42 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
-// Function to share the bot via Telegram message
-function inviteFriend() {
-    const botUsername = "@cozybetabot"; // Your bot's username
-    const deepLink = `https://t.me/${botUsername}?start=${localStorage.getItem('username') || 'guest'}`;
+// Initial setup when the page loads
+window.onload = function() {
+    getUsername(); // Fetch and display username
+    getScore(); // Fetch and display score
+};
 
-    if (window.Telegram && window.Telegram.WebApp) {
-        Telegram.WebApp.sendData(deepLink); // Send the deep link via Telegram message
-    } else {
-        console.log('Telegram WebApp is not available.');
-        // Fallback: Open the link directly in the browser
-        window.open(deepLink, "_blank");
-    }
+// Function to update the score in localStorage and on the page
+function updateScore(newScore) {
+    localStorage.setItem('score', newScore);
+    document.getElementById('score').innerText = newScore;
 }
 
-// Add event listener to the "Invite a Friend" button
-document.querySelector('.invite').addEventListener('click', inviteFriend);
+// Function to update the score based on mining progress
+function updateMiningScore() {
+    const miningActive = localStorage.getItem('miningActive') === 'true';
+    if (miningActive) {
+        const storedScore = parseFloat(localStorage.getItem('score')) || 0;
+        const lastMiningTime = parseInt(localStorage.getItem('lastMiningTime')) || Date.now();
+        const elapsedSeconds = Math.floor((Date.now() - lastMiningTime) / 1000);
+
+        // Calculate new score based on elapsed time (e.g., 0.01 points per second)
+        const miningRate = 0.01; // Adjust the mining rate as needed
+        const newScore = storedScore + elapsedSeconds * miningRate;
+
+        // Display the updated score on the page without changing localStorage
+        document.getElementById('score').innerText = newScore.toFixed(2);
+    } else {
+        // If mining is not active, just display the stored score
+        const storedScore = localStorage.getItem('score') || 0;
+        document.getElementById('score').innerText = storedScore;
+    }
+}
 
 // Initial setup when the page loads
 window.onload = function() {
     getUsername(); // Fetch and display username
     getScore(); // Fetch and display score
+    setInterval(updateMiningScore, 1000); // Update mining score every second
 };

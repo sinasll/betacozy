@@ -9,17 +9,22 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json());  // For parsing application/json
+
+// Serve static files from "public" directory (if you have a static front-end)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB connection using .env variable for consistency
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Home route
+app.get('/', (req, res) => {
+  res.send('Welcome to the homepage!');
+});
 
-// Update score for a user
+// API routes
 app.put('/api/user/:userId/score', async (req, res) => {
     const { userId } = req.params;
     const { score } = req.body;
@@ -35,7 +40,7 @@ app.put('/api/user/:userId/score', async (req, res) => {
     }
 });
 
-// Leaderboard route: Get the top users based on their score
+// Leaderboard route
 app.get('/api/leaderboard', async (req, res) => {
     try {
         const leaderboard = await User.find().sort({ score: -1 }).limit(10);
@@ -45,7 +50,7 @@ app.get('/api/leaderboard', async (req, res) => {
     }
 });
 
-// Export the function to be used by Vercel
+// Export the function for Vercel
 module.exports = (req, res) => {
   app(req, res);
 };

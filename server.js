@@ -33,7 +33,5 @@ app.put('/api/user/:userId/score', async (req, res) => {
     }
 });
 
-// Start server
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Server is running on port 3000');
-});
+// Export the app for Vercel
+module.exports = app;

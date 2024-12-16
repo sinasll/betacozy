@@ -104,8 +104,8 @@ function updateMiningScore() {
         const lastMiningTime = parseInt(localStorage.getItem('lastMiningTime')) || Date.now();
         const elapsedSeconds = Math.floor((Date.now() - lastMiningTime) / 1000);
 
-        // Calculate new score based on elapsed time (e.g., 0.01 points per second)
-        const miningRate = 0.01; // Adjust the mining rate as needed
+        // Calculate new score based on elapsed time (e.g., 0.001 points per second)
+        const miningRate = 0.001; // Adjust the mining rate as needed
         const newScore = storedScore + elapsedSeconds * miningRate;
 
         // Display the updated score on the page without changing localStorage

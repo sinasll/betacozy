@@ -17,6 +17,7 @@ if (window.Telegram && window.Telegram.WebApp) {
         if (!localStorage.getItem('username')) {
             localStorage.setItem('username', user.username);
             localStorage.setItem('score', '0.00'); // Initialize score to 0.00
+            localStorage.setItem('lastClaimed', ''); // Initialize last claimed date
         }
         document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
     } else {
@@ -25,6 +26,7 @@ if (window.Telegram && window.Telegram.WebApp) {
             const guestUsername = generateRandomGuestUsername();
             localStorage.setItem('username', guestUsername);
             localStorage.setItem('score', '0.00'); // Default score for guests
+            localStorage.setItem('lastClaimed', ''); // Initialize last claimed date
         }
         document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
     }
@@ -36,6 +38,7 @@ if (window.Telegram && window.Telegram.WebApp) {
         const guestUsername = generateRandomGuestUsername();
         localStorage.setItem('username', guestUsername); // Store guest username
         localStorage.setItem('score', '0.00'); // Default score for guests
+        localStorage.setItem('lastClaimed', ''); // Initialize last claimed date
     }
     document.getElementById('username').innerText = `@${localStorage.getItem('username')}`;
 }
@@ -105,7 +108,7 @@ function startMining() {
     localStorage.setItem('lastMiningTime', Date.now()); // Save the timestamp of when mining starts
 
     document.querySelector('.mining-button').disabled = true;
-    document.querySelector('.mining-button').textContent = 'MINING 0.01 $COZY per second';
+    document.querySelector('.mining-button').textContent = 'MINING 0.001 $COZY per second';
 
     resumeMining(); // Start or resume mining
 }
@@ -118,7 +121,7 @@ function resumeMining() {
         const elapsedSeconds = Math.floor((Date.now() - lastMiningTime) / 1000);
 
         // Add mined score based on elapsed time
-        currentScore += elapsedSeconds * 0.01; // 0.01 per second
+        currentScore += elapsedSeconds * 0.001; // 0.001 per second
         updateScore(currentScore);
 
         // Update the last mining time
@@ -126,7 +129,7 @@ function resumeMining() {
 
         // Continue mining every second
         setInterval(() => {
-            currentScore += 0.01; // Increment by 0.01 every second
+            currentScore += 0.001; // Increment by 0.001 every second
             updateScore(currentScore);
         }, 1000);
     }
@@ -150,6 +153,62 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
+// Daily Reward Functionality
+function claimDailyReward() {
+    const currentTime = new Date().getTime(); // Current UTC timestamp
+    const lastClaimed = parseInt(localStorage.getItem('lastClaimed')) || 0; // Last claimed time
+
+    // Check if 24 hours have passed since the last claim
+    const timeDifference = currentTime - lastClaimed;
+    const hoursInADay = 24 * 60 * 60 * 1000;
+
+    if (timeDifference >= hoursInADay) {
+        // The reward is always 100 coins
+        const rewardCoins = 100;
+
+        // Update the user's score
+        let currentScore = parseFloat(localStorage.getItem('score')) || 0;
+        currentScore += rewardCoins;
+        updateScore(currentScore);
+
+        // Update the last claimed time and lock the reward for 24 hours
+        localStorage.setItem('lastClaimed', currentTime.toString());
+
+        // Disable the button and start countdown
+        document.querySelector('.daily-reward-button').disabled = true;
+        startCountdown();
+    } else {
+        alert("You can claim your reward again in 24 hours.");
+    }
+}
+
+// Countdown function to update the button with remaining time
+function startCountdown() {
+    const countdownElement = document.querySelector('.daily-reward-button');
+    const lastClaimed = parseInt(localStorage.getItem('lastClaimed')) || 0;
+    const hoursInADay = 24 * 60 * 60 * 1000;
+
+    const interval = setInterval(() => {
+        const currentTime = new Date().getTime();
+        const timeDifference = currentTime - lastClaimed;
+        const remainingTime = hoursInADay - timeDifference;
+
+        if (remainingTime <= 0) {
+            clearInterval(interval);
+            countdownElement.disabled = false;
+            countdownElement.innerText = 'DAILY REWARD';
+        } else {
+            const remainingHours = Math.floor(remainingTime / (1000 * 60 * 60));
+            const remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+            countdownElement.innerText = ` ${remainingHours}:${remainingMinutes}:${remainingSeconds}`;
+        }
+    }, 1000);
+}
+
+// Event listener for daily reward button
+document.querySelector('.daily-reward-button').addEventListener('click', claimDailyReward);
+
 // Initial setup when the page loads
 window.onload = function() {
     getUsername(); // Fetch and display username
@@ -158,7 +217,12 @@ window.onload = function() {
     // Resume mining if it was active
     if (localStorage.getItem('miningActive') === 'true') {
         document.querySelector('.mining-button').disabled = true;
-        document.querySelector('.mining-button').textContent = 'MINING 0.01 $COZY per second';
+        document.querySelector('.mining-button').textContent = 'MINING 0.001 $COZY per second';
         resumeMining();
+    }
+
+    // Start countdown for the daily reward button if it is disabled
+    if (localStorage.getItem('lastClaimed')) {
+        startCountdown();
     }
 };

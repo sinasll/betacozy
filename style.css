@@ -217,10 +217,50 @@ display: none; /* For Chrome, Safari, and Edge */
         font-weight: bold;
     }
 
-    .mining-button {
-        margin: 20px auto;
-        padding: 10px 20px;
+    .mining-box {
         background-color: rgb(20, 20, 20);
+        border-radius: 20px;
+        margin: 0px auto;
+        padding: 10px 5px;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .daily-box {
+        background-color: rgb(20, 20, 20);
+        border-radius: 20px;
+        margin: 5px auto;
+        padding: 10px 5px;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .h1-mining {
+       font-size: 15px;
+    }
+
+    .h1-daily {
+        font-size: 15px;
+    }
+
+    .COZYCOIN-IMG {
+            width: 25px;  /* Adjust the size as needed */
+            height: auto;
+            margin-right: 5px;  /* Space between the image and text */
+            vertical-align: middle;  /* Align image with the text */
+        
+    }
+
+    .mining-button {
+        margin: 5px auto;
+        padding: 10px 20px;
+        background-color: black;
         color: rgb(225, 225, 225);
         border-radius: 20px;
         font-size: 1em;
@@ -230,9 +270,9 @@ display: none; /* For Chrome, Safari, and Edge */
     }
 
     .daily-reward-button {
-        margin: 20px auto;
+        margin: 5px auto;
         padding: 10px 20px;
-        background-color: rgb(20, 20, 20);
+        background-color: black;
         color: rgb(225, 225, 225);
         border-radius: 20px;
         font-size: 1em;

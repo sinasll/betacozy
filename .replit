@@ -1,0 +1,23 @@
+modules = ["nodejs-16", "web"]
+run = "npm run start"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "npm run start"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[workflows]
+
+[[workflows.workflow]]
+name = "bot"
+mode = "parallel"
+author = 38469234
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node bot.js"

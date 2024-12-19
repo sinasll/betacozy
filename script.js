@@ -72,27 +72,33 @@ function updateScore(newScore) {
     localStorage.setItem('score', formattedScore);
     document.getElementById('score').innerText = formattedScore;
 
-    // Send the updated score to the backend
+    // Send the updated score to the backend using WebSocket
     const username = localStorage.getItem('username');
-    
-    // Sending a POST request to the backend to save the score in MongoDB
-    fetch('http://localhost:3000/update-score', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+
+    // Create a WebSocket connection
+    const ws = new WebSocket('ws://localhost:3000'); // Change this to your WebSocket server URL
+
+    ws.onopen = () => {
+        // Send score update when WebSocket connection is established
+        ws.send(JSON.stringify({
             username: username,
             score: formattedScore
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Score updated successfully:', data);
-    })
-    .catch(error => {
-        console.error('Error updating score:', error);
-    });
+        }));
+    };
+
+    ws.onmessage = (event) => {
+        // Handle any response from the server
+        const response = JSON.parse(event.data);
+        console.log('Server response:', response);
+    };
+
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+        console.log('WebSocket connection closed');
+    };
 }
 
 // Function to handle mining logic

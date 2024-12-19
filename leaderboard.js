@@ -90,49 +90,52 @@ function goFriends() {
     window.location.href = "friends.html";
 }
 
-// Function to fetch and display the leaderboard
-async function fetchLeaderboard() {
-  try {
-    const response = await fetch('http://localhost:3000/api/leaderboard'); // Update with your actual API URL
-    if (response.ok) {
-      const leaderboardData = await response.json();
-      displayLeaderboard(leaderboardData);
-    } else {
-      console.log('Error fetching leaderboard');
+// WebSocket connection to listen for leaderboard updates
+const ws = new WebSocket('ws://localhost:3000'); // Replace with your WebSocket server URL
+
+// When WebSocket connection is established
+ws.onopen = function() {
+    console.log('WebSocket connection established!');
+};
+
+// Listen for messages from the WebSocket server (updates)
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    // If the message contains leaderboard data
+    if (data.type === 'leaderboardUpdate') {
+        displayLeaderboard(data.leaderboard); // Update leaderboard with the new data
     }
-  } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-  }
-}
+};
 
 // Function to display the leaderboard on the page
 function displayLeaderboard(data) {
-  const leaderboardElement = document.getElementById('leaderboard');
-  leaderboardElement.innerHTML = ''; // Clear previous content
+    const leaderboardElement = document.getElementById('leaderboard');
+    leaderboardElement.innerHTML = ''; // Clear previous content
 
-  // Slice the data to get the top 100 users
-  const top100Data = data.slice(0, 100);
+    // Slice the data to get the top 100 users
+    const top100Data = data.slice(0, 100);
 
-  // Create a list of leaderboard entries
-  top100Data.forEach((user, index) => {
-    const userDiv = document.createElement('div');
-    userDiv.classList.add('leaderboard-entry');
-    
-    const rank = document.createElement('span');
-    rank.innerText = `${index + 1}.`; // Rank starts at 1
-    
-    const username = document.createElement('span');
-    username.innerText = `@${user.username}`;
-    
-    const score = document.createElement('span');
-    score.innerText = `${user.score} points`;
-    
-    userDiv.appendChild(rank);
-    userDiv.appendChild(username);
-    userDiv.appendChild(score);
+    // Create a list of leaderboard entries
+    top100Data.forEach((user, index) => {
+        const userDiv = document.createElement('div');
+        userDiv.classList.add('leaderboard-entry');
+        
+        const rank = document.createElement('span');
+        rank.innerText = `${index + 1}.`; // Rank starts at 1
+        
+        const username = document.createElement('span');
+        username.innerText = `@${user.username}`;
+        
+        const score = document.createElement('span');
+        score.innerText = `${user.score} points`;
+        
+        userDiv.appendChild(rank);
+        userDiv.appendChild(username);
+        userDiv.appendChild(score);
 
-    leaderboardElement.appendChild(userDiv);
-  });
+        leaderboardElement.appendChild(userDiv);
+    });
 }
 
 // Function to update the score based on mining progress
@@ -160,6 +163,5 @@ function updateMiningScore() {
 window.onload = function() {
     getUsername(); // Fetch and display username
     getScore(); // Fetch and display score
-    fetchLeaderboard(); // Fetch and display leaderboard
     setInterval(updateMiningScore, 1000); // Update mining score every second
-};
+};  
